@@ -1,0 +1,30 @@
+Parameters:
+  EnvironmentName:
+    Description: An environment name that will be prefixed to resource names
+    Type: String
+    Default: infra
+
+Resources:
+  VPC:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://medusalabs.s3.amazonaws.com/vpc.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcCIDR: 172.33.32.0/21
+        PublicASubnetCIDR: 172.33.32.0/24
+        PublicBSubnetCIDR: 172.33.33.0/24
+        PublicCSubnetCIDR: 172.33.34.0/24
+        PrivateASubnetCIDR: 172.33.36.0/24
+        PrivateBSubnetCIDR: 172.33.37.0/24
+        PrivateCSubnetCIDR: 172.33.38.0/24
+  
+  SecurityGroups:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://medusalabs.s3.amazonaws.com/security-group.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VPC: !GetAtt VPC.Outputs.VPC
+        VpcCIDR: !GetAtt VPC.Outputs.VpcCIDR
+
